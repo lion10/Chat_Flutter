@@ -10,12 +10,22 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Chat',
       theme: ThemeData.dark(),
-      home: MyHomePage(),
+      initialRoute: MyHomePage.id,
+      routes: {
+        MyHomePage.id: (context) =>MyHomePage(),
+        Registration.id: (context) =>Registration(),
+        Login.id: (context) =>Login(),
+        Chat.id: (context) =>Chat(),
+      },
     );
   }
 }
 
+
+
 class MyHomePage extends StatelessWidget {
+   static const String id = "HOMESCREEN" ;
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -43,11 +53,15 @@ class MyHomePage extends StatelessWidget {
           SizedBox(height: 50.0,),
           CustomButton(
             label: 'Log in',
-            callback: (){},
+            callback: (){
+              Navigator.of(context).pushNamed(Login.id);
+            },
           ),
           CustomButton(
             label: 'Register',
-            callback: (){},
+            callback: (){
+              Navigator.of(context).pushNamed(Registration.id);
+            },
           )
         ],
       ),
@@ -79,5 +93,53 @@ class CustomButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+
+// Registration
+
+class Registration extends StatefulWidget {
+  static const String id = "REGISTRATION" ;
+
+  @override
+  _RegistrationState createState() => _RegistrationState();
+}
+
+class _RegistrationState extends State<Registration> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+// Login
+class Login extends StatefulWidget {
+  static const String id = "LOGIN" ;
+
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+
+// chat
+
+class Chat extends StatefulWidget {
+  static const String id = "CHAT" ;
+  @override
+  _ChatState createState() => _ChatState();
+}
+
+class _ChatState extends State<Chat> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
