@@ -115,17 +115,18 @@ class _RegistrationState extends State<Registration> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> registerUser() async {
-    final  FirebaseUser user =  await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password) as FirebaseUser;
+    FirebaseUser user = (await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    )).user;
 
-    Navigator.push(context,
+    Navigator.push(
+        context,
         MaterialPageRoute(
-            builder: (context)=> Chat(),
+            builder: (context)=> Chat(user: user),
         )
       );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,9 +178,63 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  String email ;
+  String password ;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> LoginUser() async {
+    FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    )).user;
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context)=> Chat(user: user,),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar:  AppBar(
+        title: Text("Chat"),
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Hero(
+              tag: 'logo',
+              child: Container(
+                child: Image.asset('assets/logo.png'),
+              ),
+            ),
+          ),
+          SizedBox(height: 20,),
+          TextField(
+            onChanged: (value)=> email = value,
+            keyboardType: TextInputType.emailAddress,
+            decoration: textInputDecoration.copyWith(hintText: "enter your Email please"),
+          ),
+          SizedBox(height: 20,),
+          TextField(
+            onChanged: (value)=> password = value ,
+            autocorrect: false,
+            obscureText: true,
+            decoration: textInputDecoration.copyWith(hintText: "enter your Password please"),
+          ),
+          SizedBox(height: 10,),
+          CustomButton(
+            label: "Log In",
+            callback: () async{
+              await LoginUser();
+            },
+          )
+        ],
+      ),
+    );;
   }
 }
 
@@ -188,6 +243,10 @@ class _LoginState extends State<Login> {
 
 class Chat extends StatefulWidget {
   static const String id = "CHAT" ;
+  final FirebaseUser user ;
+
+  const Chat({Key key ,this.user}) :super(key :key);
+
   @override
   _ChatState createState() => _ChatState();
 }
