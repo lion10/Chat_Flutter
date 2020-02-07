@@ -246,14 +246,95 @@ class Chat extends StatefulWidget {
   final FirebaseUser user ;
 
   const Chat({Key key ,this.user}) :super(key :key);
-
   @override
   _ChatState createState() => _ChatState();
 }
 
 class _ChatState extends State<Chat> {
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final Firestore firestore = Firestore.instance ;
+
+  TextEditingController _textEditingController = TextEditingController();  // for edit text input
+  ScrollController scrollController = ScrollController(); // for list view
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Chat"),
+        leading: Hero(
+          tag: 'logo',
+          child: Container(
+            height: 40,
+            child: Image.asset('assets/logo.png'),
+          ),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon:Icon(Icons.close),
+            onPressed: (){
+              firebaseAuth.signOut();
+              Navigator.of(context).popUntil((route) => route.isFirst );
+            },
+          )
+        ],
+      ),
+    body: SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: firestore.collection('message').snapshots(),
+              builder: (context,snapshot){
+                if (!snapshot.hasData){
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return ListView();
+              },
+            ),
+          ),
+          Container(
+            child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      controller:_textEditingController ,
+                      decoration:  textInputDecoration.copyWith(hintText: "enter message"),
+
+                    ),
+                  ),
+                  SendButton(
+                    text : "Send",
+                    callback: (){ },
+                  )
+                ],
+
+            ),
+          )
+        ],
+      ),
+    ),
+    );
   }
 }
+
+class SendButton extends StatelessWidget {
+  final String text;
+  final VoidCallback callback;
+
+
+  const SendButton({Key key,this.text, this.callback}): super(key : key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: callback,
+      child: Text(text),
+      color: Colors.red,
+    );
+  }
+}
+
